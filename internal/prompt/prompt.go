@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/saboyagustavo/go-monitoring/utils"
 )
@@ -19,7 +20,6 @@ type PromptAction func(p *Prompt)
 
 type Prompt struct {
 	Options PromptOptions
-	Actions []PromptAction
 }
 
 var optionOrder = []PromptOptions{START, AUDIT, EXIT}
@@ -30,8 +30,18 @@ var optionTexts = map[PromptOptions]string{
 	EXIT:  "LEAVE PROGRAM",
 }
 
-func (p *Prompt) PickMainMenuOption() {
-	fmt.Printf("GOT %d — %s ", p.Options, optionTexts[p.Options])
+func (p *Prompt) ExecOptionAction() {
+	switch p.Options {
+	case EXIT:
+		fmt.Println("EXITING THE PROGRAM... BYE!")
+		os.Exit(0)
+	}
+}
+
+func (p *Prompt) ExecMainMenu() {
+	p.DisplayOptions()
+	p.GetUserInput()
+	p.ExecOptionAction()
 }
 
 func (p *Prompt) IsValidOption() bool {
@@ -45,27 +55,21 @@ func (p *Prompt) IsValidOption() bool {
 
 func (p *Prompt) GetUserInput() {
 	fmt.Println("\nSELECT ONE OF THE MAIN OPTIONS ABOVE:")
+
 	for {
 		_, err := fmt.Scan(&p.Options)
 		if err != nil || !p.IsValidOption() {
 			fmt.Println("PLEASE ENTER A VALID NUMBER:")
-			utils.ClearInputBuffer()
 		} else {
-			p.PickMainMenuOption()
+			fmt.Printf("GOT %d — %s \n", p.Options, optionTexts[p.Options])
 			break
 		}
+		utils.ClearInputBuffer()
 	}
-	utils.ClearInputBuffer()
 }
 
-func DisplayOptions() {
+func (p *Prompt) DisplayOptions() {
 	for _, option := range optionOrder {
 		fmt.Printf("%d — %s\n", option, optionTexts[option])
 	}
-}
-
-func MainMenu() {
-	DisplayOptions()
-	prompt := Prompt{}
-	prompt.GetUserInput()
 }
