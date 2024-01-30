@@ -18,6 +18,5 @@ func main() {
 
 	fmt.Println("APP && API STATUSES AND HEALTHCHECK")
 	fmt.Println(art)
-	fmt.Println("Please select one of the main options below")
 	prompt.MainMenu()
 }

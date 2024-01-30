@@ -1,11 +1,15 @@
 package prompt
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/saboyagustavo/go-monitoring/utils"
+)
 
 type PromptOptions uint8
 
 const (
-	DEFAULT PromptOptions = iota
+	_ PromptOptions = iota
 	START
 	AUDIT
 	EXIT
@@ -26,16 +30,32 @@ var optionTexts = map[PromptOptions]string{
 	EXIT:  "LEAVE PROGRAM",
 }
 
-func PickMainMenuOption(p *Prompt) {
-	fmt.Printf("GOT %s — ", optionTexts[p.Options])
+func (p *Prompt) PickMainMenuOption() {
+	fmt.Printf("GOT %d — %s ", p.Options, optionTexts[p.Options])
 }
 
-func CheckValidOption() {
-	// TODO: validate input prompt entries
+func (p *Prompt) IsValidOption() bool {
+	for _, option := range optionOrder {
+		if p.Options == option {
+			return true
+		}
+	}
+	return false
 }
 
-func InputPrompt() {
-	// TODO: scan input prompt entries
+func (p *Prompt) GetUserInput() {
+	fmt.Println("\nSELECT ONE OF THE MAIN OPTIONS ABOVE:")
+	for {
+		_, err := fmt.Scan(&p.Options)
+		if err != nil || !p.IsValidOption() {
+			fmt.Println("PLEASE ENTER A VALID NUMBER:")
+			utils.ClearInputBuffer()
+		} else {
+			p.PickMainMenuOption()
+			break
+		}
+	}
+	utils.ClearInputBuffer()
 }
 
 func DisplayOptions() {
@@ -46,4 +66,6 @@ func DisplayOptions() {
 
 func MainMenu() {
 	DisplayOptions()
+	prompt := Prompt{}
+	prompt.GetUserInput()
 }
