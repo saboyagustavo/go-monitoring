@@ -12,7 +12,7 @@ func NewWebMonitorHandler() *WebMonitorHandler {
 	return &WebMonitorHandler{}
 }
 
-func (wmh *WebMonitorHandler) GetResource(path string) {
+func (wmh *WebMonitorHandler) GetResource(path string, expectedStatusCode int) {
 	startTime := time.Now()
 
 	res, err := http.Get(path)
@@ -22,8 +22,6 @@ func (wmh *WebMonitorHandler) GetResource(path string) {
 	}
 
 	elapsedTime := time.Since(startTime).Milliseconds()
-
-	expectedStatusCode := http.StatusOK
 
 	if res.StatusCode == expectedStatusCode {
 		log.Printf(

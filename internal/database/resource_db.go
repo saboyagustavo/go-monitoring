@@ -14,17 +14,6 @@ func NewResourceDB(db *sql.DB) *ResourceDB {
 	return &ResourceDB{db: db}
 }
 
-func (rDB *ResourceDB) GetVersion() (string, error) {
-	var version string
-	err := rDB.db.QueryRow("SELECT SQLITE_VERSION()").Scan(&version)
-
-	if err != nil {
-		return "", err
-	}
-
-	return version, nil
-
-}
 func (rDB *ResourceDB) GetResources() ([]*entity.Resource, error) {
 	rows, err := rDB.db.Query(`
 		SELECT 

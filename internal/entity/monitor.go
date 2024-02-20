@@ -8,24 +8,21 @@ import (
 )
 
 type Monitor struct {
-	Handler *webserver.WebMonitorHandler
-	Path    string
-	Method  string
+	Handler  *webserver.WebMonitorHandler
+	Resource *Resource
 }
 
-func NewMonitor(path, method string) *Monitor {
-	//TODO: pega aqui o path e e o método e abastece
+func NewMonitor(resource *Resource) *Monitor {
 	return &Monitor{
-		Handler: webserver.NewWebMonitorHandler(),
-		Path:    path,
-		Method:  method,
+		Handler:  webserver.NewWebMonitorHandler(),
+		Resource: resource,
 	}
 }
 
 func (m *Monitor) Exec() {
-	switch m.Method {
+	switch m.Resource.HTTPMethod {
 	case "GET":
-		m.Handler.GetResource(m.Path)
+		m.Handler.GetResource(m.Resource.URL, m.Resource.StatusCode)
 	}
 }
 
