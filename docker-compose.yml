@@ -1,0 +1,28 @@
+version: "3"
+services:
+  mysql-db:
+    image: mysql:8.0.30-debian
+    container_name: mysql-db
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/data/mysql:/var/lib/mysql
+      - ./db/mysql-entrypoint:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+
+  adminer:
+    container_name: adminer
+    image: adminer:4.8.1
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy

@@ -16,6 +16,7 @@ func NewMonitorService(resourceDB *database.ResourceDB) *MonitorService {
 }
 
 func (ms *MonitorService) MonitorResources() {
+	log.Printf("", ms.ResourceDB)
 	resources, err := ms.ResourceDB.GetResources()
 	if err != nil {
 		log.Printf("an error occurred when trying to get the resources: %v", err.Error())

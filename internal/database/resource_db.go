@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/saboyagustavo/go-monitoring/internal/entity"
 )
@@ -17,13 +18,16 @@ func NewResourceDB(db *sql.DB) *ResourceDB {
 func (rDB *ResourceDB) GetResources() ([]*entity.Resource, error) {
 	rows, err := rDB.db.Query(`
 		SELECT 
-			id, 
+			id,
+			name, 
 			url,
+			http_method,
 			status_code
 		FROM resources
 	`)
 
 	if err != nil {
+		log.Printf("erro foi aqui")
 		return nil, err
 	}
 
@@ -34,7 +38,13 @@ func (rDB *ResourceDB) GetResources() ([]*entity.Resource, error) {
 	for rows.Next() {
 		var resource entity.Resource
 
-		err := rows.Scan(&resource.ID, &resource.URL, &resource.StatusCode)
+		err := rows.Scan(
+			&resource.ID,
+			&resource.Name,
+			&resource.URL,
+			&resource.HTTPMethod,
+			&resource.StatusCode,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -50,14 +60,18 @@ func (rDB *ResourceDB) GetResource(id string) (*entity.Resource, error) {
 	err := rDB.db.QueryRow(`
 		SELECT 
 			id, 
+			name,
 			url,
+			http_method,
 			status_code
 		FROM resources
 		WHERE id = ?
 	`, id,
 	).Scan(
 		&resource.ID,
+		&resource.Name,
 		&resource.URL,
+		&resource.HTTPMethod,
 		&resource.StatusCode,
 	)
 
@@ -71,13 +85,15 @@ func (rDB *ResourceDB) GetResource(id string) (*entity.Resource, error) {
 func (rDB *ResourceDB) SaveResource(resource *entity.Resource) (string, error) {
 	_, err := rDB.db.Exec(`
 		INSERT INTO resources (
-			id, url, status_code
+			id, name, url, http_method, status_code
 		) VALUES (
-			?, ?, ?
+			?, ?, ?, ?, ?
 		)
 	`,
 		resource.ID,
+		resource.Name,
 		resource.URL,
+		resource.HTTPMethod,
 		resource.StatusCode,
 	)
 

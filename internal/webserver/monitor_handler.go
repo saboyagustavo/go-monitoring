@@ -12,12 +12,12 @@ func NewWebMonitorHandler() *WebMonitorHandler {
 	return &WebMonitorHandler{}
 }
 
-func (wmh *WebMonitorHandler) GetResource(path string, expectedStatusCode int) {
+func (wmh *WebMonitorHandler) GetResource(url string, expectedStatusCode int) {
 	startTime := time.Now()
 
-	res, err := http.Get(path)
+	res, err := http.Get(url)
 	if err != nil {
-		log.Printf("GOT: %s — LOG [Error]: %v\n", path, err)
+		log.Printf("GOT: %s — LOG [Error]: %v\n", url, err)
 		return
 	}
 
@@ -26,14 +26,14 @@ func (wmh *WebMonitorHandler) GetResource(path string, expectedStatusCode int) {
 	if res.StatusCode == expectedStatusCode {
 		log.Printf(
 			"[GOT]: %s — [LOG]: Passed: Response as expected — [StatusCode]: %d — [TIME]: %dms\n",
-			path,
+			url,
 			res.StatusCode,
 			elapsedTime,
 		)
 	} else {
 		log.Printf(
 			"[GOT]: %s — [LOG]: Warning: Unexpected response - [StatusCode]: %d, Expected: %d — [TIME]: %dms\n",
-			path,
+			url,
 			expectedStatusCode,
 			res.StatusCode,
 			elapsedTime,
